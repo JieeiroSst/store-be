@@ -1,4 +1,4 @@
-package domain
+package model
 
 import "time"
 
@@ -11,6 +11,10 @@ type Sale struct {
 	Expire      time.Time
 }
 
-type Expire struct {
-	Expire time.Time
+type InputSale struct {
+	Amount      string
+	Description string
+	Type        string
+	CustomerId  string
+	Expire      int
 }

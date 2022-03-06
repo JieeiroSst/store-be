@@ -2,6 +2,8 @@ package repository
 
 import (
 	"errors"
+	"fmt"
+	"time"
 
 	"github.com/JIeeiroSst/store/internal/domain"
 	"gorm.io/gorm"
@@ -13,6 +15,7 @@ type Sales interface {
 	Delete(id string) error
 	Sales(pagination domain.Pagination) ([]domain.Sale, error)
 	SaleById(id string) (*domain.Sale, error)
+	ExpireById(id string) (*time.Time, error)
 }
 
 type SaleRepo struct {
@@ -72,4 +75,18 @@ func (r *SaleRepo) SaleById(id string) (*domain.Sale, error) {
 		return nil, errors.New("Not Found")
 	}
 	return &sale, nil
+}
+
+func (r *SaleRepo) ExpireById(id string) (*time.Time, error) {
+	var expire domain.Expire
+	query := r.db.Model(&domain.Sale{}).Select("expire").Where("id = ?", id).First(&expire)
+	if query.Error != nil {
+		return nil, query.Error
+	}
+
+	if query.RowsAffected == 0 {
+		return nil, fmt.Errorf("Not Found by id sale %s", id)
+	}
+
+	return &expire.Expire, nil
 }

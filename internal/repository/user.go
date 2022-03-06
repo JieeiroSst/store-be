@@ -18,6 +18,7 @@ type Users interface {
 	LockUser(id string) error
 	UnLockLockUser(id string) error
 	IsUserLock(id string) error
+	
 }
 
 type UserRepo struct {

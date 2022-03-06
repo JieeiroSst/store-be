@@ -41,8 +41,10 @@ type MysqlConfig struct {
 }
 
 type SerectConfig struct {
-	JwtSecretKey string
-	OtpSecretKey string
+	JwtSecretKey  string
+	OtpSecretKey  string
+	AccessSerect  string
+	RefreshSerect string
 }
 
 func ReadConf(filename string) (*Config, error) {
@@ -55,7 +57,6 @@ func ReadConf(filename string) (*Config, error) {
 	err = yaml.Unmarshal(buffer, &config)
 	if err != nil {
 		fmt.Printf("err: %v\n", err)
-
 	}
 	return config, nil
 }

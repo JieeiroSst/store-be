@@ -17,12 +17,6 @@ type User struct {
 	Payment     Payment `gorm:"foreignKey:CustomerId"`
 }
 
-type Role struct {
-	Id          string
-	Title       string
-	Description string
-}
-
 type Category struct {
 	Id          string
 	Name        string

@@ -1,12 +1,14 @@
 package usecase
 
 import (
+	"context"
 	"errors"
 	"time"
 
 	"github.com/JIeeiroSst/store/model"
 	"github.com/JIeeiroSst/store/pkg/hash"
 	"github.com/JIeeiroSst/store/pkg/jwt"
+	"github.com/JIeeiroSst/store/pkg/redis"
 
 	"github.com/JIeeiroSst/store/internal/domain"
 	"github.com/JIeeiroSst/store/internal/repository"
@@ -14,7 +16,7 @@ import (
 )
 
 type Users interface {
-	Login(user domain.User) (*model.ResultToken, error)
+	Login(user domain.User) (*model.TokenDetails, error)
 	SignUp(user domain.User) error
 	Update(id string, input domain.InputUser) error
 	UserById(id string) (*domain.User, error)
@@ -27,6 +29,7 @@ type UserUsecase struct {
 	hash      hash.Hash
 	userRepo  repository.Users
 	snowflake snowflake.SnowflakeData
+	cache     redis.RedisDB
 }
 
 func NewUserUsecase(userRepo repository.Users, snowflake snowflake.SnowflakeData,
@@ -39,7 +42,7 @@ func NewUserUsecase(userRepo repository.Users, snowflake snowflake.SnowflakeData
 	}
 }
 
-func (u *UserUsecase) Login(user domain.User) (*model.ResultToken, error) {
+func (u *UserUsecase) Login(user domain.User) (*model.TokenDetails, error) {
 	token, err := u.userRepo.CheckAccount(user)
 	if err != nil {
 		return nil, err
@@ -59,13 +62,18 @@ func (u *UserUsecase) Login(user domain.User) (*model.ResultToken, error) {
 		RoleId:   token.RoleId,
 	}
 
-	tokenString, err := u.jwt.GenerateToken(tokens)
+	tokenString, err := u.jwt.CreateToken(tokens)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := u.cache.CreateAuth(context.Background(), token.Id, tokenString); err != nil {
 		return nil, err
 	}
 
 	return tokenString, nil
 }
+
 func (u *UserUsecase) SignUp(user domain.User) error {
 	check := u.userRepo.CheckAccountExists(user)
 	if check != nil {
