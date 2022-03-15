@@ -62,16 +62,16 @@ func (u *UserUsecase) Login(user domain.User) (*model.TokenDetails, error) {
 		RoleId:   token.RoleId,
 	}
 
-	tokenString, err := u.jwt.CreateToken(tokens)
+	tokenDetail, err := u.jwt.CreateToken(tokens)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := u.cache.CreateAuth(context.Background(), token.Id, tokenString); err != nil {
+	if err := u.cache.CreateAuth(context.Background(), token.Id, tokenDetail); err != nil {
 		return nil, err
 	}
 
-	return tokenString, nil
+	return tokenDetail, nil
 }
 
 func (u *UserUsecase) SignUp(user domain.User) error {

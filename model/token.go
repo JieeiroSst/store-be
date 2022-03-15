@@ -23,3 +23,10 @@ type AccessDetails struct {
 	AccessUuid string
 	UserId     uint64
 }
+
+type TokenResult struct {
+	AccessToken  string
+	RefreshToken string
+	AccessUuid   string
+	RefreshUuid  string
+}

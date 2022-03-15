@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/JIeeiroSst/store/model"
@@ -14,7 +15,6 @@ type RedisDB interface {
 	CreateAuth(ctx context.Context, userid string, td *model.TokenDetails) error
 	FetchAuth(ctx context.Context, userId string) (string, error)
 	DeleteAuth(ctx context.Context, givenUuid string) (int64, error)
-	UpdateAuth(ctx context.Context, key string, value string) error
 }
 
 type redisDB struct {
@@ -53,13 +53,21 @@ func (r *redisDB) CreateAuth(ctx context.Context, userid string, td *model.Token
 	rt := time.Unix(td.RtExpires, 0)
 	now := time.Now()
 
-	errAccess := r.client.Set(ctx, td.AccessUuid, userid, at.Sub(now)).Err()
-	if errAccess != nil {
-		return errAccess
+	if err := r.client.Set(ctx, td.AccessUuid, userid, at.Sub(now)).Err(); err != nil {
+		return err
 	}
-	errRefresh := r.client.Set(ctx, td.RefreshUuid, userid, rt.Sub(now)).Err()
-	if errRefresh != nil {
-		return errRefresh
+	if err := r.client.Set(ctx, td.RefreshUuid, userid, rt.Sub(now)).Err(); err != nil {
+		return err
+	}
+
+	accTokenUserId := fmt.Sprintf("%s-%s", at.GoString(), userid)
+	rfTokenUserId := fmt.Sprintf("%s-%s", rt.GoString(), userid)
+
+	if err := r.client.Set(ctx, accTokenUserId, td.AccessToken, at.Sub(now)).Err(); err != nil {
+		return err
+	}
+	if err := r.client.Set(ctx, rfTokenUserId, td.RefreshToken, rt.Sub(now)).Err(); err != nil {
+		return err
 	}
 	return nil
 }
@@ -78,10 +86,4 @@ func (r *redisDB) DeleteAuth(ctx context.Context, givenUuid string) (int64, erro
 		return 0, err
 	}
 	return deleted, nil
-}
-
-func (r *redisDB) UpdateAuth(ctx context.Context, key string, value string) error {
-		
-
-	return nil
 }

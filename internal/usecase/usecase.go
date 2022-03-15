@@ -16,6 +16,7 @@ type Usecase struct {
 	Categories Categories
 	Sales      Sales
 	Carts      Carts
+	Tokens     Tokens
 }
 
 type Dependency struct {
@@ -34,6 +35,7 @@ func NewUsecase(deps Dependency) *Usecase {
 	categoryUsecase := NewCategoryUsecase(deps.Repos.Categories, deps.snowflake)
 	saleUsecase := NewSaleUsecase(deps.Repos.Sales, deps.snowflake)
 	cartUsecase := NewCartUsecase(deps.Repos.Carts, deps.snowflake)
+	tokenUsecase := NewTokenUsecase(deps.jwt)
 
 	return &Usecase{
 		Users:      userUsecase,
@@ -44,5 +46,6 @@ func NewUsecase(deps Dependency) *Usecase {
 		Categories: categoryUsecase,
 		Sales:      saleUsecase,
 		Carts:      cartUsecase,
+		Tokens:     tokenUsecase,
 	}
 }

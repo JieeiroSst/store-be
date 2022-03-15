@@ -11,6 +11,11 @@ import (
 )
 
 func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
+	userGroup := api.Group("/user")
+
+	userGroup.POST("/login", h.Login)
+	userGroup.POST("/register", h.SignUp)
+	userGroup.POST("/:user-id", h.Update)
 
 }
 
@@ -25,11 +30,12 @@ func (h *Handler) Login(ctx *gin.Context) {
 		ReponseError(ctx, 500, err.Error())
 	}
 
-	tokenDetail := model.TokenDetails{
-		AccessToken:  token.AccessToken,
-		RefreshToken: token.RefreshToken,
-		AccessUuid:   token.AccessUuid,
+	var tokenDetail model.TokenResult
+
+	if err := marshalJson(token, tokenDetail); err != nil {
+		ReponseError(ctx, 500, err.Error())
 	}
+
 	Reponse(ctx, 201, tokenDetail)
 }
 
@@ -37,6 +43,10 @@ func (h *Handler) SignUp(ctx *gin.Context) {
 	var user domain.User
 	if err := ctx.ShouldBind(&user); err != nil {
 		ReponseError(ctx, 400, err.Error())
+	}
+
+	if err := h.usecase.Users.SignUp(user); err != nil {
+		ReponseError(ctx, 500, err.Error())
 	}
 
 	Reponse(ctx, 201, user)
@@ -133,7 +143,7 @@ func (h *Handler) IsUserLogin(ctx *gin.Context) {
 	}
 	res := map[string]interface{}{
 		"access-uuid": id,
-		"message": "user is logged in",
+		"message":     "user is logged in",
 	}
 	Reponse(ctx, 200, res)
 }
