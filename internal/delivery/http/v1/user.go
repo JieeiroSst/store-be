@@ -132,18 +132,43 @@ func (h *Handler) LogOut(ctx *gin.Context) {
 }
 
 func (h *Handler) IsUserLogin(ctx *gin.Context) {
-	id := ctx.Param("access-uuid")
-	accessId, err := h.redis.FetchAuth(context.Background(), id)
+	accessId := ctx.Param("access-uuid")
+	userId, err := h.redis.FetchAuth(context.Background(), accessId)
 	if err != nil {
 		ReponseError(ctx, 500, err.Error())
 	}
-	if len(strings.TrimSpace(accessId)) == 0 {
+	if len(strings.TrimSpace(userId)) == 0 {
 		message := ""
 		ReponseError(ctx, 500, message)
 	}
 	res := map[string]interface{}{
-		"access-uuid": id,
+		"access-uuid": accessId,
 		"message":     "user is logged in",
 	}
 	Reponse(ctx, 200, res)
+}
+
+func (h *Handler) RefreshStoreToken(ctx *gin.Context) {
+	accessUuid := ctx.Param("access-uuid")
+	var token model.Token
+	if err := ctx.ShouldBind(&token); err != nil {
+		ReponseError(ctx, 400, err.Error())
+	}
+
+	refereToken, err := h.jwt.RegenerateAccessToken(token, accessUuid)
+	if err != nil {
+		ReponseError(ctx, 500, err.Error())
+		return
+	}
+
+	if err := h.redis.Set(context.Background(), accessUuid, refereToken); err != nil {
+		ReponseError(ctx, 500, err.Error())
+		return
+	}
+	res := map[string]interface{}{
+		"accessId": accessUuid,
+		"token":    refereToken,
+	}
+	Reponse(ctx, 200, res)
+
 }

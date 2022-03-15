@@ -14,6 +14,7 @@ type RedisDB interface {
 	Get(ctx context.Context, key string) (interface{}, error)
 	CreateAuth(ctx context.Context, userid string, td *model.TokenDetails) error
 	FetchAuth(ctx context.Context, userId string) (string, error)
+	FetchToken(ctx context.Context, key string) (string, error)
 	DeleteAuth(ctx context.Context, givenUuid string) (int64, error)
 }
 
@@ -78,6 +79,14 @@ func (r *redisDB) FetchAuth(ctx context.Context, userId string) (string, error) 
 		return "", err
 	}
 	return userid, nil
+}
+
+func (r *redisDB) FetchToken(ctx context.Context, key string) (string, error) {
+	token, err := r.client.Get(ctx, key).Result()
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }
 
 func (r *redisDB) DeleteAuth(ctx context.Context, givenUuid string) (int64, error) {

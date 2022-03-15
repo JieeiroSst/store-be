@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/JIeeiroSst/store/internal/usecase"
+	"github.com/JIeeiroSst/store/pkg/jwt"
 	"github.com/JIeeiroSst/store/pkg/redis"
 	"github.com/gin-gonic/gin"
 )
@@ -9,12 +10,14 @@ import (
 type Handler struct {
 	usecase *usecase.Usecase
 	redis   redis.RedisDB
+	jwt     jwt.TokenUser
 }
 
-func NewHandler(usecase *usecase.Usecase, redis redis.RedisDB) *Handler {
+func NewHandler(usecase *usecase.Usecase, redis redis.RedisDB, jwt jwt.TokenUser) *Handler {
 	return &Handler{
 		usecase: usecase,
 		redis:   redis,
+		jwt:     jwt,
 	}
 }
 
