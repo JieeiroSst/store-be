@@ -2,8 +2,11 @@ package v1
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/google/uuid"
 
 	"github.com/JIeeiroSst/store/internal/domain"
 	"github.com/JIeeiroSst/store/model"
@@ -19,6 +22,18 @@ func (h *Handler) initUserRoutes(api *gin.RouterGroup) {
 
 }
 
+// ShowAccount godoc
+// @Summary      Show an account
+// @Description  get string by ID
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Account ID"
+// @Success      200  {object}  model.Account
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
+// @Router       /accounts/{id} [get]
 func (h *Handler) Login(ctx *gin.Context) {
 	var user domain.User
 	if err := ctx.ShouldBind(&user); err != nil {
@@ -36,9 +51,33 @@ func (h *Handler) Login(ctx *gin.Context) {
 		ReponseError(ctx, 500, err.Error())
 	}
 
+	u, err := uuid.NewRandom()
+	if err != nil {
+		Reponse(ctx, 500, map[string]interface{}{"data": "no data", "status": 500})
+		return
+	}
+	sessionId := fmt.Sprintf("%s-%s", u.String(), user.Username)
+	if err := h.cache.Set(sessionId, []byte(user.Username)); err != nil {
+		Reponse(ctx, 500, map[string]interface{}{"data": "no data", "status": 500})
+		return
+	}
+
+	ctx.SetCookie("current_subject", sessionId, 30*60, "/api", "", false, true)
 	Reponse(ctx, 201, tokenDetail)
 }
 
+// ShowAccount godoc
+// @Summary      Show an account
+// @Description  get string by ID
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Account ID"
+// @Success      200  {object}  model.Account
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
+// @Router       /accounts/{id} [get]
 func (h *Handler) SignUp(ctx *gin.Context) {
 	var user domain.User
 	if err := ctx.ShouldBind(&user); err != nil {
@@ -70,6 +109,18 @@ func (h *Handler) Update(ctx *gin.Context) {
 	Reponse(ctx, 200, reponse)
 }
 
+// ShowAccount godoc
+// @Summary      Show an account
+// @Description  get string by ID
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Account ID"
+// @Success      200  {object}  model.Account
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
+// @Router       /accounts/{id} [get]
 func (h *Handler) UserById(ctx *gin.Context) {
 	id := ctx.Param("user-id")
 	user, err := h.usecase.Users.UserById(id)
@@ -103,6 +154,18 @@ func (h *Handler) Users(ctx *gin.Context) {
 	Reponse(ctx, 200, users)
 }
 
+// ShowAccount godoc
+// @Summary      Show an account
+// @Description  get string by ID
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Account ID"
+// @Success      200  {object}  model.Account
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
+// @Router       /accounts/{id} [get]
 func (h *Handler) LockUser(ctx *gin.Context) {
 	id := ctx.Param("user-id")
 	if err := h.usecase.Users.LockUser(id); err != nil {
@@ -131,6 +194,18 @@ func (h *Handler) LogOut(ctx *gin.Context) {
 	Reponse(ctx, 200, res)
 }
 
+// ShowAccount godoc
+// @Summary      Show an account
+// @Description  get string by ID
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Account ID"
+// @Success      200  {object}  model.Account
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
+// @Router       /accounts/{id} [get]
 func (h *Handler) IsUserLogin(ctx *gin.Context) {
 	accessId := ctx.Param("access-uuid")
 	userId, err := h.redis.FetchAuth(context.Background(), accessId)
@@ -148,6 +223,18 @@ func (h *Handler) IsUserLogin(ctx *gin.Context) {
 	Reponse(ctx, 200, res)
 }
 
+// ShowAccount godoc
+// @Summary      Show an account
+// @Description  get string by ID
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Account ID"
+// @Success      200  {object}  model.Account
+// @Failure      400  {object}  httputil.HTTPError
+// @Failure      404  {object}  httputil.HTTPError
+// @Failure      500  {object}  httputil.HTTPError
+// @Router       /accounts/{id} [get]
 func (h *Handler) RefreshStoreToken(ctx *gin.Context) {
 	accessUuid := ctx.Param("access-uuid")
 	var token model.Token

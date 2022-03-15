@@ -30,10 +30,12 @@ func (h *Handler) Init() *gin.Engine {
 		gin.Logger(),
 	)
 
+	h.initApi(router)
+
 	return router
 }
 
-func (h *Handler) InitApi(router *gin.Engine) {
+func (h *Handler) initApi(router *gin.Engine) {
 	handlerV1 := v1.NewHandler(&h.usecase, h.redis, h.jwt)
 	api := router.Group("/api")
 	{
