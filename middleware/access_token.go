@@ -7,21 +7,21 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type accessController struct {
+type AccessJWTs struct {
 	jwt jwt.TokenUser
 }
 
-type AccessController interface {
+type AccessJWT interface {
 	Authenticate() gin.HandlerFunc
 }
 
-func NewAccessController(jwt jwt.TokenUser) AccessController {
-	return &accessController{
+func NewAccessController(jwt jwt.TokenUser) *AccessJWTs {
+	return &AccessJWTs{
 		jwt: jwt,
 	}
 }
 
-func (a *accessController) Authenticate() gin.HandlerFunc {
+func (a *AccessJWTs) Authenticate() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bearToken := c.Request.Header.Get("Authorization")
 		if len(strings.TrimSpace(bearToken)) == 0 {

@@ -15,7 +15,7 @@ import (
 func main() {
 	router := gin.Default()
 
-	config, err := config.ReadConf("config.yml")
+	config, err := config.ReadConfig("config.yml")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,7 +28,7 @@ func main() {
 		config.Mysql.MysqlDbname,
 	)
 
-	mysqlOrm := mysql.NewMysqlConn(dns)
+	mysqlOrm, _ := mysql.InitMysql(dns)
 
 	mysqlOrm.AutoMigrate(&CasbinRule{})
 

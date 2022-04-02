@@ -24,12 +24,14 @@ func (h *Handler) initTokenRoutes(api *gin.RouterGroup) {
 func (h *Handler) RegenerateAccessToken(ctx *gin.Context) {
 	var token model.Token
 	if err := ctx.ShouldBind(&token); err != nil {
-		ReponseError(ctx, 400, err.Error())
+		reponseError(ctx, 400, err.Error())
+		return
 	}
 	accessUuid := ctx.Param("access-uuid")
 	accessToken, err := h.usecase.Tokens.RegenerateAccessToken(token, accessUuid)
 	if err != nil {
-		ReponseError(ctx, 500, err.Error())
+		reponseError(ctx, 500, err.Error())
+		return
 	}
-	Reponse(ctx, 200, accessToken)
+	reponse(ctx, 200, accessToken)
 }

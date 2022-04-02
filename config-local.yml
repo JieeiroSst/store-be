@@ -1,7 +1,7 @@
 server:
   PortServer: :5000
 
-secret:
+secretService:
   JwtSecretKey: secretkey
 
 mysql:

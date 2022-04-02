@@ -19,17 +19,17 @@ type AuthorizationCasbin interface {
 	enforce(sub string, obj string, act string, adapter persist.Adapter) (bool, error)
 }
 
-type authorizationCasbin struct {
+type AuthorizationCasbins struct {
 	cache bigcache.Cache
 }
 
-func NewAuthorization(cache bigcache.Cache) AuthorizationCasbin {
-	return &authorizationCasbin{
+func NewAuthorization(cache bigcache.Cache) *AuthorizationCasbins {
+	return &AuthorizationCasbins{
 		cache: cache,
 	}
 }
 
-func (a *authorizationCasbin) Authenticate() gin.HandlerFunc {
+func (a *AuthorizationCasbins) Authenticate() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sessionId, _ := c.Cookie("current_subject")
 		sub, err := a.cache.Get(sessionId)
@@ -43,7 +43,7 @@ func (a *authorizationCasbin) Authenticate() gin.HandlerFunc {
 	}
 }
 
-func (a *authorizationCasbin) Authorize(obj string, act string, adapter persist.Adapter) gin.HandlerFunc {
+func (a *AuthorizationCasbins) Authorize(obj string, act string, adapter persist.Adapter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		cookie, _ := c.Cookie("current_subject")
 		val, existed := a.cache.Get(cookie)
@@ -67,7 +67,7 @@ func (a *authorizationCasbin) Authorize(obj string, act string, adapter persist.
 	}
 }
 
-func (a *authorizationCasbin) enforce(sub string, obj string, act string, adapter persist.Adapter) (bool, error) {
+func (a *AuthorizationCasbins) enforce(sub string, obj string, act string, adapter persist.Adapter) (bool, error) {
 	enforcer, err := casbin.NewEnforcer("pkg/conf/rbac_model.conf", adapter)
 	if err != nil {
 		return false, fmt.Errorf("failed to create casbin enforcer: %w", err)

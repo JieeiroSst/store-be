@@ -47,7 +47,7 @@ type SerectConfig struct {
 	RefreshSerect string
 }
 
-func ReadConf(filename string) (*Config, error) {
+func ReadConfig(filename string) (*Config, error) {
 	buffer, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err

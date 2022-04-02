@@ -13,9 +13,9 @@ mysql:
   MysqlDriver:   mysql
 
 postgres:
-  PostgresqlHost: localhost
+  PostgresqlHost: john.db.elephantsql.com
   PostgresqlPort: 5432
-  PostgresqlUser: postgres
-  PostgresqlPassword: postgres
-  PostgresqlDbname: postgres
+  PostgresqlUser: fpdlysgd
+  PostgresqlPassword: TBX6DJGFGz-GHSPLXSP0764JvnPl886R
+  PostgresqlDbname: fpdlysgd
   PgDriver: pgx

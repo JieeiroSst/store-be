@@ -1,39 +1,24 @@
 package postgres
 
 import (
-	"sync"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var (
-	instance *postgresConnect
-	once     sync.Once
+	instance *PostgresConnect
 )
 
-type postgresConnect struct {
+type PostgresConnect struct {
 	db *gorm.DB
 }
 
-func GetMysqlConnInstance(dns string) *postgresConnect {
-	once.Do(func() {
-		db, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
-		if err != nil {
-			panic(err)
-		}
-		instance = &postgresConnect{db: db}
-	})
-	return instance
-}
-
-func NewPostgresConn(dns string) *gorm.DB {
-	return GetMysqlConnInstance(dns).db
-}
-
-func (postgres *postgresConnect) AutoMigrate(tables ...interface{}) error {
-	for _, table := range tables {
-		return postgres.db.AutoMigrate(&table)
+func InitPostgreSQL(dns string) (*gorm.DB, error) {
+	db, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
+	if err != nil {
+		panic(err)
 	}
-	return nil
+	instance = &PostgresConnect{db}
+
+	return db, nil
 }
