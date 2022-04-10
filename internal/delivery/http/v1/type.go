@@ -2,13 +2,25 @@ package v1
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
+type ErroMessage struct {
+	Timestamp int    `json:"timestamp"`
+	Status    int    `json:"status"`
+	Error     string `json:"error"`
+	Message   string `json:"message"`
+	Path      string `json:"path"`
+}
+
 func reponseError(ctx *gin.Context, code int, message string) {
-	ctx.JSONP(code, gin.H{
-		"message": message,
+	ctx.JSON(code, ErroMessage{
+		Timestamp: int(time.Now().Unix()),
+		Status:    400,
+		Message:   message,
+		Path:      ctx.Request.URL.Path,
 	})
 }
 

@@ -6,7 +6,8 @@ import (
 )
 
 func (h *Handler) initTokenRoutes(api *gin.RouterGroup) {
-
+	tokenGroup := api.Group("/token")
+	tokenGroup.POST("/:access-uuid", h.regenerateAccessToken)
 }
 
 // ShowAccount godoc
@@ -21,7 +22,7 @@ func (h *Handler) initTokenRoutes(api *gin.RouterGroup) {
 // @Failure      404  {object}  httputil.HTTPError
 // @Failure      500  {object}  httputil.HTTPError
 // @Router       /accounts/{id} [get]
-func (h *Handler) RegenerateAccessToken(ctx *gin.Context) {
+func (h *Handler) regenerateAccessToken(ctx *gin.Context) {
 	var token model.Token
 	if err := ctx.ShouldBind(&token); err != nil {
 		reponseError(ctx, 400, err.Error())
