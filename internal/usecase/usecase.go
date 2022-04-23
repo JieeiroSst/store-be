@@ -21,21 +21,21 @@ type Usecase struct {
 
 type Dependency struct {
 	Repos     *repository.Repositories
-	snowflake snowflake.SnowflakeData
-	hash      hash.Hash
-	jwt       jwt.TokenUser
+	Snowflake snowflake.SnowflakeData
+	Hash      hash.Hash
+	Jwt       jwt.TokenUser
 }
 
 func NewUsecase(deps Dependency) *Usecase {
-	userUsecase := NewUserUsecase(deps.Repos.Users, deps.snowflake, deps.hash, deps.jwt)
-	roleUsecase := NewRoleUsecase(deps.Repos.Roles, deps.snowflake)
-	discountUsecase := NewDiscountUsecase(deps.Repos.Discounts, deps.snowflake)
-	paymentUsecase := NewPaymentUsecase(deps.Repos.Payments, deps.snowflake)
-	productUsecase := NewProductUsecase(deps.Repos.Products, deps.snowflake)
-	categoryUsecase := NewCategoryUsecase(deps.Repos.Categories, deps.snowflake)
-	saleUsecase := NewSaleUsecase(deps.Repos.Sales, deps.snowflake)
-	cartUsecase := NewCartUsecase(deps.Repos.Carts, deps.snowflake)
-	tokenUsecase := NewTokenUsecase(deps.jwt)
+	userUsecase := NewUserUsecase(deps.Repos.Users, deps.Snowflake, deps.Hash, deps.Jwt)
+	roleUsecase := NewRoleUsecase(deps.Repos.Roles, deps.Snowflake)
+	discountUsecase := NewDiscountUsecase(deps.Repos.Discounts, deps.Snowflake)
+	paymentUsecase := NewPaymentUsecase(deps.Repos.Payments, deps.Snowflake)
+	productUsecase := NewProductUsecase(deps.Repos.Products, deps.Snowflake)
+	categoryUsecase := NewCategoryUsecase(deps.Repos.Categories, deps.Snowflake)
+	saleUsecase := NewSaleUsecase(deps.Repos.Sales, deps.Snowflake)
+	cartUsecase := NewCartUsecase(deps.Repos.Carts, deps.Snowflake)
+	tokenUsecase := NewTokenUsecase(deps.Jwt)
 
 	return &Usecase{
 		Users:      userUsecase,

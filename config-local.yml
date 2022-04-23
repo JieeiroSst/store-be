@@ -19,3 +19,6 @@ postgres:
   PostgresqlPassword: postgres
   PostgresqlDbname: postgres
   PgDriver: pgx
+
+redis:
+  dns: localhost:6379

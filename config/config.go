@@ -12,6 +12,7 @@ type Config struct {
 	Mysql    MysqlConfig
 	Secret   SerectConfig
 	Postgres PostgresConfig
+	Redis    RedisConfig 
 }
 
 type ServerConfig struct {
@@ -28,6 +29,10 @@ type PostgresConfig struct {
 	PostgresqlDbname   string
 	PostgresqlSSLMode  bool
 	PgDriver           string
+}
+
+type RedisConfig struct {
+	Dns string
 }
 
 type MysqlConfig struct {
