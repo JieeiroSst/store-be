@@ -61,8 +61,8 @@ func (r *redisDB) CreateAuth(ctx context.Context, userid string, td *model.Token
 		return err
 	}
 
-	accTokenUserId := fmt.Sprintf("%s-%s", at.GoString(), userid)
-	rfTokenUserId := fmt.Sprintf("%s-%s", rt.GoString(), userid)
+	accTokenUserId := fmt.Sprintf("%s-%s", at.String(), userid)
+	rfTokenUserId := fmt.Sprintf("%s-%s", rt.String(), userid)
 
 	if err := r.client.Set(ctx, accTokenUserId, td.AccessToken, at.Sub(now)).Err(); err != nil {
 		return err
