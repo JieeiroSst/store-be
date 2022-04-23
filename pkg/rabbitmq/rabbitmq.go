@@ -1,8 +1,6 @@
 package rabbitmq
 
 import (
-	"log"
-
 	"github.com/streadway/amqp"
 )
 
@@ -11,8 +9,8 @@ type RabbitMQ struct {
 }
 
 type RabbitMQRepo interface {
-	Publish(queueName, routingKey, exchange string, data []byte) error
-	StartConsumer(queueName, routingKey, exchange string) (<-chan amqp.Delivery, error)
+	Publish(queueName string, data []byte) error
+	StartConsumer(queueName string) (<-chan amqp.Delivery, error)
 }
 
 func GetConnRabbitmq(rabbitURL string) (RabbitMQRepo, error) {
@@ -25,97 +23,62 @@ func GetConnRabbitmq(rabbitURL string) (RabbitMQRepo, error) {
 	}, err
 }
 
-func (r *RabbitMQ) Publish(queueName, routingKey, exchange string, data []byte) error {
-	ch, err := r.Connection.Channel()
+func (r *RabbitMQ) Publish(queueName string, data []byte) error {
+	channelRabbitMQ, err := r.Connection.Channel()
 	if err != nil {
-		return err
+		panic(err)
 	}
-	defer ch.Close()
-	if err != nil {
-		return err
-	}
-	_, err = ch.QueueDeclare(
-		queueName,
-		false,
-		false,
-		false,
-		false,
-		nil,
+	defer channelRabbitMQ.Close()
+
+	_, err = channelRabbitMQ.QueueDeclare(
+		queueName, // queue name
+		true,      // durable
+		false,     // auto delete
+		false,     // exclusive
+		false,     // no wait
+		nil,       // arguments
 	)
 	if err != nil {
+		panic(err)
+	}
+	message := amqp.Publishing{
+		ContentType: "text/plain",
+		Body:        []byte(data),
+	}
+
+	if err := channelRabbitMQ.Publish(
+		"",        // exchange
+		queueName, // queue name
+		false,     // mandatory
+		false,     // immediate
+		message,   // message to publish
+	); err != nil {
 		return err
 	}
-	err = ch.Publish(
-		exchange,
-		routingKey,
-		false,
-		false,
-		amqp.Publishing{
-			ContentType:  "application/json",
-			Body:         data,
-			DeliveryMode: amqp.Persistent,
-		},
-	)
-	if err != nil {
-		return err
-	}
+
 	return nil
 }
 
-func (r *RabbitMQ) StartConsumer(queueName, routingKey, exchange string) (<-chan amqp.Delivery, error) {
-	ch, err := r.Connection.Channel()
+func (r *RabbitMQ) StartConsumer(queueName string) (<-chan amqp.Delivery, error) {
+	channelRabbitMQ, err := r.Connection.Channel()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
-	defer ch.Close()
+	defer channelRabbitMQ.Close()
 
-	err = ch.ExchangeDeclare(
-		exchange,
-		"direct",
-		false,
-		false,
-		false,
-		false,
-		nil,
+	messages, err := channelRabbitMQ.Consume(
+		queueName, // queue name
+		"",        // consumer
+		true,      // auto-ack
+		false,     // exclusive
+		false,     // no local
+		false,     // no wait
+		nil,       // arguments
 	)
+	
 	if err != nil {
-		log.Fatal(err)
-	}
-
-	queue, err := ch.QueueDeclare(
-		queueName,
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	err = ch.QueueBind(
-		queue.Name,
-		routingKey,
-		exchange,
-		false,
-		nil,
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
-	msgs, err := ch.Consume(
-		queue.Name,
-		"", // consumer name
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return msgs, nil
+	return messages, nil
 }
