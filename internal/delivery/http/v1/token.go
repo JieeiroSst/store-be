@@ -21,7 +21,7 @@ func (h *Handler) initTokenRoutes(api *gin.RouterGroup) {
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Failure      500  {object}  httputil.HTTPError
-// @Router       /accounts/{id} [get]
+// @Router       /api/v1/accounts/{id} [get]
 func (h *Handler) regenerateAccessToken(ctx *gin.Context) {
 	var token model.Token
 	if err := ctx.ShouldBind(&token); err != nil {

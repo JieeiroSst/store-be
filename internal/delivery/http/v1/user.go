@@ -247,7 +247,7 @@ func (h *Handler) LogOut(ctx *gin.Context) {
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Failure      500  {object}  httputil.HTTPError
-// @Router       /accounts/{id} [get]
+// @Router       /api/v1/accounts/{id} [get]
 func (h *Handler) IsUserLogin(ctx *gin.Context) {
 	accessId := ctx.Param("access-uuid")
 	userId, err := h.redis.FetchAuth(context.Background(), accessId)
@@ -278,7 +278,7 @@ func (h *Handler) IsUserLogin(ctx *gin.Context) {
 // @Failure      400  {object}  httputil.HTTPError
 // @Failure      404  {object}  httputil.HTTPError
 // @Failure      500  {object}  httputil.HTTPError
-// @Router       /accounts/{id} [get]
+// @Router       /api/v1/accounts/{id} [get]
 func (h *Handler) RefreshStoreToken(ctx *gin.Context) {
 	accessUuid := ctx.Param("access-uuid")
 	var token model.Token

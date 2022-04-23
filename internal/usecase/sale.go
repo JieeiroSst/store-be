@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"fmt"
+	"errors"
 	"time"
 
 	"github.com/JIeeiroSst/store/internal/domain"
@@ -92,7 +92,7 @@ func (u *SaleUsecase) IsExpireById(id string) error {
 		return err
 	}
 	if ok := expire.Equal(now); !ok {
-		return fmt.Errorf("sale time is over")
+		return errors.New("sale time is over")
 	}
 	return nil
 }
