@@ -8,11 +8,12 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Mysql    MysqlConfig
-	Secret   SerectConfig
-	Postgres PostgresConfig
-	Redis    RedisConfig 
+	Server         ServerConfig
+	Mysql          MysqlConfig
+	Secret         SerectConfig
+	Postgres       PostgresConfig
+	Redis          RedisConfig
+	StorageService StorageServiceConfig
 }
 
 type ServerConfig struct {
@@ -50,6 +51,14 @@ type SerectConfig struct {
 	OtpSecretKey  string
 	AccessSerect  string
 	RefreshSerect string
+}
+
+type StorageServiceConfig struct {
+	Key       string
+	SecretKey string
+	Endpoint  string
+	Protocol  string
+	Bucket    string
 }
 
 func ReadConfig(filename string) (*Config, error) {

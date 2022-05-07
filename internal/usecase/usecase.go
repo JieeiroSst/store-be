@@ -4,6 +4,7 @@ import (
 	"github.com/JIeeiroSst/store/internal/repository"
 	"github.com/JIeeiroSst/store/pkg/hash"
 	"github.com/JIeeiroSst/store/pkg/jwt"
+	"github.com/JIeeiroSst/store/pkg/minio"
 	"github.com/JIeeiroSst/store/pkg/snowflake"
 )
 
@@ -17,13 +18,15 @@ type Usecase struct {
 	Sales      Sales
 	Carts      Carts
 	Tokens     Tokens
+	Medias     Medias
 }
 
 type Dependency struct {
-	Repos     *repository.Repositories
-	Snowflake snowflake.SnowflakeData
-	Hash      hash.Hash
-	Jwt       jwt.TokenUser
+	Repos       *repository.Repositories
+	Snowflake   snowflake.SnowflakeData
+	Hash        hash.Hash
+	Jwt         jwt.TokenUser
+	MinioClient minio.Client
 }
 
 func NewUsecase(deps Dependency) *Usecase {
@@ -36,6 +39,7 @@ func NewUsecase(deps Dependency) *Usecase {
 	saleUsecase := NewSaleUsecase(deps.Repos.Sales, deps.Snowflake)
 	cartUsecase := NewCartUsecase(deps.Repos.Carts, deps.Snowflake)
 	tokenUsecase := NewTokenUsecase(deps.Jwt)
+	mediaUsecase := NewMediaUsecase(deps.Repos.Medias, deps.MinioClient, deps.Snowflake)
 
 	return &Usecase{
 		Users:      userUsecase,
@@ -47,5 +51,6 @@ func NewUsecase(deps Dependency) *Usecase {
 		Sales:      saleUsecase,
 		Carts:      cartUsecase,
 		Tokens:     tokenUsecase,
+		Medias:     mediaUsecase,
 	}
 }
