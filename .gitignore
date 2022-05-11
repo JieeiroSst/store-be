@@ -5,3 +5,5 @@ config-local.yml
 config-test.yml
 
 .env
+
+config.yml
