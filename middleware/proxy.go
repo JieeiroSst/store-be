@@ -19,3 +19,4 @@ func ReverseProxy(target string) gin.HandlerFunc {
 		proxy.ServeHTTP(c.Writer, c.Request)
 	}
 }
+
