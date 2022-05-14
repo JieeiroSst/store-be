@@ -28,6 +28,7 @@ require (
 	git.apache.org/thrift.git v0.0.0-20180924222215-a9235805469b // indirect
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
+	github.com/bshuster-repo/logrus-logstash-hook v1.0.2 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cockroachdb/cockroach-go v0.0.0-20181001143604-e0a95dfd547c // indirect
 	github.com/cucumber/godog v0.8.1 // indirect
@@ -70,12 +71,16 @@ require (
 	github.com/qor/oss v0.0.0-20210412121326-3c5583a62015 // indirect
 	github.com/qor/qor v1.2.0 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
+	github.com/sima-land/logrus-logstash-hook v0.0.0-20171113125854-e75938162af1 // indirect
+	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect
+	github.com/zsais/go-gin-prometheus v0.1.0 // indirect
 	go.elastic.co/apm v1.15.0 // indirect
 	golang.org/x/text v0.3.7 // indirect
+	gopkg.in/gemnasium/logrus-airbrake-hook.v2 v2.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

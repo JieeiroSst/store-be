@@ -41,7 +41,7 @@ func (s *server) AppServerAPI() error {
 		s.Dependency.Config.Postgres.PostgresqlHost, s.Dependency.Config.Postgres.PostgresqlUser, s.Dependency.Config.Postgres.PostgresqlPassword,
 		s.Dependency.Config.Postgres.PostgresqlDbname, s.Dependency.Config.Postgres.PostgresqlPort)
 
-	if err := migration.RunMigration(dsn); err != nil {
+	if err := migration.RunMigration(s.Dependency.Config); err != nil {
 		return err
 	}
 	postgresConn, err := postgres.InitPostgreSQL(dsn)

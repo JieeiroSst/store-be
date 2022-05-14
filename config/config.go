@@ -14,6 +14,7 @@ type Config struct {
 	Postgres       PostgresConfig
 	Redis          RedisConfig
 	StorageService StorageServiceConfig
+	Logstash       LogstashConfig
 }
 
 type ServerConfig struct {
@@ -59,6 +60,12 @@ type StorageServiceConfig struct {
 	Endpoint  string
 	Protocol  string
 	Bucket    string
+}
+
+type LogstashConfig struct {
+	Tranport string
+	Host     string
+	NameApp  string
 }
 
 func ReadConfig(filename string) (*Config, error) {

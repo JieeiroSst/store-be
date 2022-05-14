@@ -17,7 +17,7 @@ func main() {
 	}
 
 	app := app.NewApp(*config)
-	if err := app.RunApp(); err != nil {
+	if err := app.RunApp(*router); err != nil {
 		log.Println(err)
 	}
 
