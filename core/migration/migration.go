@@ -21,6 +21,7 @@ func RunMigration(config config.Config) error {
 	if err := m.Up(); err != nil {
 		return err
 	}
+	//"postgres://postgres:postgres@localhost:5432/example?sslmode=disable"
 
 	return nil
 }

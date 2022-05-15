@@ -11,7 +11,9 @@ import (
 func main() {
 	router := gin.Default()
 
-	config, err := config.ReadConfig("config-local.yml")
+	nameFile := "config.yml"
+
+	config, err := config.ReadConfig(nameFile)
 	if err != nil {
 		log.Fatal(err)
 	}
